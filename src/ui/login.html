@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <a id="oidcLink" href="/login/auth">
+    Connection Les Communs</a>
+  <a id="appLink" href="./app.html" style="display:none"></a>
+</body>
+<script>
+
+  window.addEventListener('load', (e) => {
+    console.log('load');
+    let token=localStorage.getItem('token');
+    if(token!=undefined && token!='undefined'){
+      console.log('existing token',token);
+      console.log('existing token typeof',typeof token);
+      localStorage.removeItem('token');
+      document.getElementById('oidcLink').click();
+    }else{
+      let search=window.location.search.split('?')[1];
+      if(search!=undefined){
+        let params=search.split('&').map(param => {
+          let terms = param.split('=')
+          return {
+            key:terms[0],
+            value:terms[1]
+          }
+        });
+        let token = params.filter(r=>r.key=='token')[0];
+        if (token!=undefined){
+          console.log('token', token.value);
+          localStorage.setItem('token',token.value);
+          document.getElementById('appLink').click();
+        }
+      }
+    }
+  })
+</script>
+
+</html>

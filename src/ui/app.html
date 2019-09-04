@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <a id="oidcLink" href="/login/auth" style="display:none"></a>
+  <h2 id="user">non authentifié</h2>
+  <h1>Secured Page</h1>
+  <h1 id="err" style="color:red"></h1>
+  <a id="appLink" href="./app.html" style="display:none"></a>
+</body>
+<script>
+  window.addEventListener('load', async (e) => {
+    console.log('load');
+    let search = window.location.search.split('?')[1];
+    let urlToken = undefined;
+    if (search != undefined) {
+      let params = search.split('&').map(param => {
+        let terms = param.split('=')
+        return {
+          key: terms[0],
+          value: terms[1]
+        }
+      });
+      let urlToken = params.filter(r => r.key == 'token')[0];
+
+      if (urlToken != undefined) {
+        console.log('urlToken', urlToken.value);
+        localStorage.setItem('token', urlToken.value);
+        document.getElementById('appLink').click();
+      } else {
+
+      }
+    }
+    if (urlToken == undefined) {
+      let token = localStorage.getItem('token');
+
+      if (token != undefined && token != 'undefined') {
+
+        console.log('existing token');
+
+        // localStorage.removeItem('token');
+        // document.getElementById('oidcLink').click();
+      } else {
+
+
+      }
+
+      var myHeaders = new Headers();
+      myHeaders.append("Authorization", 'JTW' + ' ' + token);
+
+      var myInit = {
+        method: 'GET',
+        headers: myHeaders,
+        mode: 'cors'
+      };
+
+      try {
+        let response = await fetch('/login/auth/user', myInit);
+
+        if (response.status == 200) {
+          let jsonResponse = await response.json();
+
+          console.log('response', jsonResponse);
+          document.getElementById('user').textContent = jsonResponse. preferred_username;
+
+        } else {
+          let text = await response.text();
+          document.getElementById('err').textContent = text + ' redirect to OIDC provider in 1 second';
+          setTimeout(function() {
+            document.getElementById('oidcLink').click();
+          }, 1000);
+
+        }
+      } catch (e) {
+        console.log('Request failed', e)
+      } finally {
+
+      }
+    }
+
+
+
+  });
+</script>
+
+</html>
