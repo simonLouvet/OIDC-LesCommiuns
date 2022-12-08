@@ -15,7 +15,7 @@ go to http://localhost:8080
 https://github.com/keycloak/keycloak-documentation/blob/master/securing_apps/topics/oidc/oidc-generic.adoc
 
 ### config keycloak lescommuns
-https://login.lescommuns.org/auth/realms/master/.well-known/openid-configuration
+https://login.lescommuns.org/auth/realms/data-food-consortium/.well-known/openid-configuration
 
 ### librairies
 https://openid.net/developers/certified/
